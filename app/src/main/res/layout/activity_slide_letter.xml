@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="horizontal">
+
+    <com.bj.zhaoyun.view.slideletter.SlideLetterView
+        android:layout_alignParentLeft="true"
+        android:id="@+id/slv_letter"
+        android:layout_width="50dp"
+        android:layout_height="match_parent"
+        android:layout_marginBottom="10dp"
+        android:layout_marginTop="15dp"
+        app:letter_default_color="#999999"
+        app:letter_selected_color="#ff0000"
+        app:letter_size="13sp" />
+
+    <TextView
+        android:visibility="gone"
+        android:id="@+id/tv_show"
+        android:text="A"
+        android:gravity="center"
+        android:textSize="50sp"
+        android:textColor="#ffffff"
+        android:background="@color/colorPrimaryDark"
+        android:layout_centerInParent="true"
+        android:layout_gravity="center"
+        android:layout_width="100dp"
+        android:layout_height="100dp" />
+</RelativeLayout>

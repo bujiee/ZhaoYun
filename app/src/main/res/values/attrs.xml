@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="SlideLetterView">
+        <attr name="letter_default_color" format="color" />
+        <attr name="letter_selected_color" format="color" />
+        <attr name="letter_size" format="dimension" />
+        <attr name="letter_selected_bg_color" format="color" />
+    </declare-styleable>
+</resources>
