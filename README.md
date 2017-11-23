@@ -51,7 +51,7 @@ XML布局
       }
 ```
 ### 扇形图
-可以自定义初始角度,返回值,带有回调
+**可以自定义初始角度,返回值,带有回调**
 ```
  <com.bj.zhaoyun.view.chart.PieChartTouchView
                 android:id="@+id/pct_chart"
