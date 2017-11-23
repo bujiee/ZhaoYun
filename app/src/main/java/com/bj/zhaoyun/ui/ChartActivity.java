@@ -4,19 +4,27 @@ package com.bj.zhaoyun.ui;
 import android.graphics.Color;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bj.zhaoyun.BaseActivity;
 import com.bj.zhaoyun.R;
 import com.bj.zhaoyun.util.MathUtil;
+import com.bj.zhaoyun.util.ToastUtil;
 import com.bj.zhaoyun.view.chart.PieChart;
+import com.bj.zhaoyun.view.chart.PieChartTouchView;
 
 import butterknife.BindView;
 
+/**
+ * 展示图标界面
+ */
 public class ChartActivity extends BaseActivity {
     @BindView(R.id.pc_pie_chat)
     PieChart pc_pie_chat;
     @BindView(R.id.ll_container)
     LinearLayout ll_container;
+    @BindView(R.id.pct_chart)
+    PieChartTouchView pct_chart;
     int maxLength = 5;
     double num[] = new double[maxLength];
     int color[] = new int[maxLength];
@@ -46,11 +54,19 @@ public class ChartActivity extends BaseActivity {
         TextView tv5 = setTextView(4, "存储40 %");
         ll_container.addView(tv5);
         num[0] = 0.1;
-        num[1] = 0.3;
-        num[2] = 0.1;
+        num[1] = 0.1;
+        num[2] = 0.3;
         num[3] = 0.1;
         num[4] = 0.4;
         pc_pie_chat.addData(num, color, -60f);
+        pct_chart.setData(num, color, -60);
+
+        pct_chart.setOnPieChartChildClickListener(new PieChartTouchView.OnPieChartChildClickListener() {
+            @Override
+            public void onClick(final int position) {
+                ToastUtil.showToastShort(mContext, "选中了-->" + position, Toast.LENGTH_SHORT);
+            }
+        });
     }
 
     private TextView setTextView(int x, String text) {

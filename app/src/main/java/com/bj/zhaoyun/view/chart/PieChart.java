@@ -57,7 +57,7 @@ public class PieChart extends View {
             mPaint.setColor(mColor[x]);
             canvas.save();
             canvas.rotate(startAngle, mRectF.centerX(), mRectF.centerY());
-            canvas.drawArc(mRectF, 0, (float) (360 * mNum[x]), true, mPaint);
+            canvas.drawArc(mRectF, 0, (float) ((float) (360 * mNum[x])+0.5), true, mPaint);
             mPaint.setTextAlign(Paint.Align.CENTER);
             mPaint.setColor(Color.BLACK);
             mPaint.setTextSize(80);

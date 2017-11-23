@@ -14,60 +14,77 @@ XML布局
         app:letter_selected_color="#ff0000"
         app:letter_size="13sp" />
  Java
- @BindView(R.id.slv_letter)
-     SlideLetterView slv_letter;
-     @BindView(R.id.tv_show)
-     TextView tv_show;
+     @BindView(R.id.slv_letter)
+      SlideLetterView slv_letter;
+      @BindView(R.id.tv_show)
+      TextView tv_show;
 
-     @Override
-     public int getLayoutId() {
-         return R.layout.activity_slide_letter;
-     }
+      @Override
+      public int getLayoutId() {
+          return R.layout.activity_slide_letter;
+      }
 
-     @Override
-     public void initData() {
-         List<String> mDatas = new ArrayList<>();
-         //65-90
-         int x = 65;
-         while (x <= 90) {
-             mDatas.add(String.valueOf((char) x));
-             x++;
-         }
-         mDatas.add(String.valueOf((char) 35));
-         slv_letter.setDatas(mDatas);
-         //触摸监控回调
-         slv_letter.setOnLetterChangeListener(new SlideLetterView.LetterChangeListener() {
-             @Override
-             public void onLetterChange(String letter, int choose) {
-                 System.out.println("choose" + choose);
-                 if (choose == -1) {
-                     tv_show.setVisibility(View.GONE);
-                 } else {
-                     tv_show.setVisibility(View.VISIBLE);
-                 }
-                 tv_show.setText(letter);
-             }
-         });
-     }
-
-
+      @Override
+      public void initData() {
+          List<String> mDatas = new ArrayList<>();
+          //65-90
+          int x = 65;
+          while (x <= 90) {
+              mDatas.add(String.valueOf((char) x));
+              x++;
+          }
+          mDatas.add(String.valueOf((char) 35));
+          slv_letter.setDatas(mDatas);
+          //触摸监控回调
+          slv_letter.setOnLetterChangeListener(new SlideLetterView.LetterChangeListener() {
+              @Override
+              public void onLetterChange(String letter, int choose) {
+                  System.out.println("choose" + choose);
+                  if (choose == -1) {
+                      tv_show.setVisibility(View.GONE);
+                  } else {
+                      tv_show.setVisibility(View.VISIBLE);
+                  }
+                  tv_show.setText(letter);
+              }
+          });
+      }
 ```
 ### 扇形图
-可以自定义初始角度,返回值
+可以自定义初始角度,返回值,带有回调
+```
+ <com.bj.zhaoyun.view.chart.PieChartTouchView
+                android:id="@+id/pct_chart"
+                android:layout_width="200dp"
+                android:layout_height="200dp" />
+ //设置数据
+ pct_chart.setData(num, color, -60);
+ num代表百分比数组
+ color代表颜色数组
+ -60 代表初始的角度
+ //回调
+ pct_chart.setOnPieChartChildClickListener(new PieChartTouchView.OnPieChartChildClickListener() {
+             @Override
+             public void onClick(final int position) {
+                ...
+             }
+         });
+
+```
 ### 遥控器布局菜单栏
 ```
-    //
-    <com.bj.zhaoyun.view.chart.Telecontroller
+//
+<com.bj.zhaoyun.view.chart.Telecontroller
         android:id="@+id/telecontroller"
         android:layout_width="150dp"
         android:layout_height="150dp" />
     //接口回调
-     telecontroller.setOnTelecontrollerClickListener(new Telecontroller.OnTelecontrollerClickListener() {
-                @Override
-                public void onClick(String result) {
-                    if (!TextUtils.isEmpty(result)) {
-                        ...
-                    }
-                }
-            });
+ telecontroller.setOnTelecontrollerClickListener(new Telecontroller.OnTelecontrollerClickListener() {
+                 @Override
+                 public void onClick(String result) {
+                     if (!TextUtils.isEmpty(result)) {
+                         ...
+                     }
+                 }
+             });
 ```
