@@ -72,8 +72,7 @@ XML布局
 
 ```
 ### 遥控器布局菜单栏
-```
-//
+```//
 <com.bj.zhaoyun.view.chart.Telecontroller
         android:id="@+id/telecontroller"
         android:layout_width="150dp"
