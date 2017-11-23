@@ -54,3 +54,20 @@ XML布局
 ```
 ### 扇形图
 可以自定义初始角度,返回值
+### 遥控器布局菜单栏
+```
+    //
+    <com.bj.zhaoyun.view.chart.Telecontroller
+        android:id="@+id/telecontroller"
+        android:layout_width="150dp"
+        android:layout_height="150dp" />
+    //接口回调
+     telecontroller.setOnTelecontrollerClickListener(new Telecontroller.OnTelecontrollerClickListener() {
+                @Override
+                public void onClick(String result) {
+                    if (!TextUtils.isEmpty(result)) {
+                        ...
+                    }
+                }
+            });
+```
