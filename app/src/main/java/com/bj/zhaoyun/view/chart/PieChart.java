@@ -3,6 +3,7 @@ package com.bj.zhaoyun.view.chart;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Point;
 import android.graphics.Rect;
@@ -125,5 +126,12 @@ public class PieChart extends View {
         if (mNum.length == color.length) {
             invalidate();
         }
+    }
+
+    private int getTouchEventIndex(int x, int y, int r) {
+        if (Math.sqrt(Math.pow(Math.abs(x) - mRectF.centerX(), 2) + Math.pow(Math.abs(y) - mRectF.centerY(), 2)) > r) {
+            return -1;
+        }
+        return -1;
     }
 }

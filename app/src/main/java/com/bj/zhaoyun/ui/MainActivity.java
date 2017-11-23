@@ -29,7 +29,8 @@ public class MainActivity extends BaseActivity {
         ReyclerViewUtil.setLinearLayoutManager(rv_container, mContext, LinearLayoutManager.VERTICAL);
         List<String> mDatas = new ArrayList<>();
         mDatas.add("字符侧滑栏");
-        mDatas.add("简单的展示图标");
+        mDatas.add("图标");
+        mDatas.add("遥控器小布局");
         MyRecyclerAdapter adapter = new MyRecyclerAdapter(mDatas, mContext);
         rv_container.setAdapter(adapter);
         adapter.setItemClickListener(new MyRecyclerAdapter.OnItemClickListener() {
@@ -41,6 +42,9 @@ public class MainActivity extends BaseActivity {
                         break;
                     case 1:
                         startActivity(new Intent(mContext, ChartActivity.class));
+                        break;
+                    case 2:
+                        startActivity(new Intent(mContext, TelecontrollerActivity.class));
                         break;
                     default:
                         break;
