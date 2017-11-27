@@ -17,11 +17,11 @@ public class ToastUtil {
      * @param charSequence charSequence
      */
     @SuppressLint("ShowToast")
-    public static void showToastShort(Context mContext, CharSequence charSequence,int timeType) {
+    public static void showToast(Context mContext, CharSequence charSequence, int timeType) {
         if (mToast != null) {
             mToast.setText(charSequence);
         } else {
-            mToast = Toast.makeText(mContext, charSequence, Toast.LENGTH_SHORT);
+            mToast = Toast.makeText(mContext, charSequence, timeType);
         }
         mToast.show();
     }

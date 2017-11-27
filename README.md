@@ -71,6 +71,31 @@ XML布局
          });
 
 ```
+### 折线图(带有点击事件的回调)
+```
+//添加数据
+  String[] x = {"1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20"};
+        String[] y = {"1", "2", "3", "4", "5", "6", "7", "8", "9", "10"};
+
+        final List<Point> points = new ArrayList<>();
+        for (int z = 0; z < x.length; z++) {
+            Point point = new Point();
+            point.y = (int) ((Math.random() + 0.1) * 10);
+            point.x = z + 1;
+            points.add(point);
+        }
+        lcv_chart.setData(x, y, points);
+//接口回调
+lcv_chart.setOnPointClickListener(new LineChartView.OnPointClickListener() {
+            @Override
+            public void onPointClick( int position) {
+                ToastUtil.showToast(mContext,position+"", Toast.LENGTH_SHORT);
+            }
+        });
+```
+
+
+
 ### 遥控器布局菜单栏
 ```//
 <com.bj.zhaoyun.view.chart.Telecontroller

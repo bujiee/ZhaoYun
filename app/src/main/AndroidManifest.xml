@@ -19,8 +19,9 @@
         </activity>
         <activity android:name=".ui.BannerActivity" />
         <activity android:name=".ui.SlideLetterActivity" />
-        <activity android:name=".ui.ChartActivity" />
-        <activity android:name=".ui.TelecontrollerActivity"></activity>
+        <activity android:name=".ui.PieChartActivity" />
+        <activity android:name=".ui.TelecontrollerActivity" />
+        <activity android:name=".ui.LineChartActivity"></activity>
     </application>
 
 </manifest>

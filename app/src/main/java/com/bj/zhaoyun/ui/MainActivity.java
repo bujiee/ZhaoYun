@@ -29,8 +29,9 @@ public class MainActivity extends BaseActivity {
         ReyclerViewUtil.setLinearLayoutManager(rv_container, mContext, LinearLayoutManager.VERTICAL);
         List<String> mDatas = new ArrayList<>();
         mDatas.add("字符侧滑栏");
-        mDatas.add("图标");
         mDatas.add("遥控器小布局");
+        mDatas.add("扇形图");
+        mDatas.add("折线图");
         MyRecyclerAdapter adapter = new MyRecyclerAdapter(mDatas, mContext);
         rv_container.setAdapter(adapter);
         adapter.setItemClickListener(new MyRecyclerAdapter.OnItemClickListener() {
@@ -41,10 +42,13 @@ public class MainActivity extends BaseActivity {
                         startActivity(new Intent(mContext, SlideLetterActivity.class));
                         break;
                     case 1:
-                        startActivity(new Intent(mContext, ChartActivity.class));
+                        startActivity(new Intent(mContext, TelecontrollerActivity.class));
                         break;
                     case 2:
-                        startActivity(new Intent(mContext, TelecontrollerActivity.class));
+                        startActivity(new Intent(mContext, PieChartActivity.class));
+                        break;
+                    case 3:
+                        startActivity(new Intent(mContext, LineChartActivity.class));
                         break;
                     default:
                         break;

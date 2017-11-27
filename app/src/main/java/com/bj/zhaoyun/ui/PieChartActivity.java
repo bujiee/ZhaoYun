@@ -8,7 +8,6 @@ import android.widget.Toast;
 
 import com.bj.zhaoyun.BaseActivity;
 import com.bj.zhaoyun.R;
-import com.bj.zhaoyun.util.MathUtil;
 import com.bj.zhaoyun.util.ToastUtil;
 import com.bj.zhaoyun.view.chart.PieChart;
 import com.bj.zhaoyun.view.chart.PieChartTouchView;
@@ -18,7 +17,7 @@ import butterknife.BindView;
 /**
  * 展示图标界面
  */
-public class ChartActivity extends BaseActivity {
+public class PieChartActivity extends BaseActivity {
     @BindView(R.id.pc_pie_chat)
     PieChart pc_pie_chat;
     @BindView(R.id.ll_container)
@@ -64,7 +63,7 @@ public class ChartActivity extends BaseActivity {
         pct_chart.setOnPieChartChildClickListener(new PieChartTouchView.OnPieChartChildClickListener() {
             @Override
             public void onClick(final int position) {
-                ToastUtil.showToastShort(mContext, "选中了-->" + position, Toast.LENGTH_SHORT);
+                ToastUtil.showToast(mContext, "选中了-->" + position, Toast.LENGTH_SHORT);
             }
         });
     }
