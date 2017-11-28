@@ -32,6 +32,7 @@ public class MainActivity extends BaseActivity {
         mDatas.add("遥控器小布局");
         mDatas.add("扇形图");
         mDatas.add("折线图");
+        mDatas.add("图片手势识别");
         MyRecyclerAdapter adapter = new MyRecyclerAdapter(mDatas, mContext);
         rv_container.setAdapter(adapter);
         adapter.setItemClickListener(new MyRecyclerAdapter.OnItemClickListener() {
@@ -49,6 +50,9 @@ public class MainActivity extends BaseActivity {
                         break;
                     case 3:
                         startActivity(new Intent(mContext, LineChartActivity.class));
+                        break;
+                    case 4:
+                        startActivity(new Intent(mContext, GestureImageActivity.class));
                         break;
                     default:
                         break;
