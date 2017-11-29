@@ -22,7 +22,8 @@
         <activity android:name=".ui.PieChartActivity" />
         <activity android:name=".ui.TelecontrollerActivity" />
         <activity android:name=".ui.LineChartActivity" />
-        <activity android:name=".ui.GestureImageActivity"></activity>
+        <activity android:name=".ui.GestureImageActivity" />
+        <activity android:name=".ui.CalculatorActivity"></activity>
     </application>
 
 </manifest>

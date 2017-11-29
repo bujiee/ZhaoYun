@@ -31,7 +31,7 @@ import android.view.ViewTreeObserver;
 public class GestureImageView extends android.support.v7.widget.AppCompatImageView
         implements ScaleGestureDetector.OnScaleGestureListener, View.OnTouchListener {
     private float scale = 1f;
-    private int maxScale = 4;
+    private int maxScale = 4;//最大放大倍数
     private Matrix mImgMatrix;
     private ScaleGestureDetector scaleGestureDetector;
     private Context mContext;
@@ -93,8 +93,8 @@ public class GestureImageView extends android.support.v7.widget.AppCompatImageVi
                 if (drawable != null) {
                     RectF rectF = getRectF(drawable);
                     if (rectF.width() > getWidth() || rectF.height() > getHeight()) {
-                        if (originIntrinsicHeight < getHeight() || originIntrinsicWidth < getWidth()) {
-                            float childScale = Math.min(originIntrinsicHeight / rectF.width(), originIntrinsicWidth / rectF.height());
+                        if (originIntrinsicHeight < getHeight() && originIntrinsicWidth < getWidth()) {
+                            float childScale = Math.min(originIntrinsicHeight / rectF.height(), originIntrinsicWidth / rectF.width());
                             mImgMatrix.postScale(childScale, childScale, e.getX(), e.getY());
                         } else {
                             float childScale = Math.min(getWidth() / rectF.width(), getHeight() / rectF.height());

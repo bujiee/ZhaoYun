@@ -33,6 +33,7 @@ public class MainActivity extends BaseActivity {
         mDatas.add("扇形图");
         mDatas.add("折线图");
         mDatas.add("图片手势识别");
+        mDatas.add("计算器");
         MyRecyclerAdapter adapter = new MyRecyclerAdapter(mDatas, mContext);
         rv_container.setAdapter(adapter);
         adapter.setItemClickListener(new MyRecyclerAdapter.OnItemClickListener() {
@@ -53,6 +54,9 @@ public class MainActivity extends BaseActivity {
                         break;
                     case 4:
                         startActivity(new Intent(mContext, GestureImageActivity.class));
+                        break;
+                    case 5:
+                        startActivity(new Intent(mContext, CalculatorActivity.class));
                         break;
                     default:
                         break;

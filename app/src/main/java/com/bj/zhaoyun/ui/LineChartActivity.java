@@ -40,8 +40,8 @@ public class LineChartActivity extends BaseActivity {
         lcv_chart.setData(x, y, points);
         lcv_chart.setOnPointClickListener(new LineChartView.OnPointClickListener() {
             @Override
-            public void onPointClick( int position) {
-                ToastUtil.showToast(mContext,position+"", Toast.LENGTH_SHORT);
+            public void onPointClick(int position) {
+                ToastUtil.showToast(mContext, position + "", Toast.LENGTH_SHORT);
             }
         });
     }

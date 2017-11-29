@@ -3,9 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <com.bj.zhaoyun.view.chart.LineChartView
-        android:id="@+id/lcv_chart"
+    <com.bj.zhaoyun.view.calc.CalculatorView
         android:layout_width="match_parent"
-        android:layout_height="150dp"
-        android:layout_marginTop="20dp" />
+        android:layout_height="match_parent" />
 </LinearLayout>

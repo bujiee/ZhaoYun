@@ -3,7 +3,10 @@
 1>常用的自定义控件(注:需要结合实际生产环境)
  1) 图标类:折线图(支持点击自定义回调),扇形图(支持点击自定义回调),遥控器菜单布局(不规则图形事件的处理)
  2) 图片处理:(1)根据手势处理的图片类(已处理滑动冲突)
-2>用网络请求的网络库 采用retrofit+rxJava
+2>用网络请求的网络库 采用retrofit+rxJava(loading)
+3>工具类
+ 1) Toast工具类
+ 2) ..
 ### 字符侧滑栏
 返回触摸的字符返回值,带有回调
 ```
@@ -98,9 +101,6 @@ lcv_chart.setOnPointClickListener(new LineChartView.OnPointClickListener() {
             }
         });
 ```
-
-
-
 ### 遥控器布局菜单栏
 ```//
 <com.bj.zhaoyun.view.chart.Telecontroller
