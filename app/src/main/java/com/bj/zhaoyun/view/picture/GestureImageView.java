@@ -1,11 +1,13 @@
 package com.bj.zhaoyun.view.picture;
 
 import android.content.Context;
+import android.graphics.ImageFormat;
 import android.graphics.Matrix;
 import android.graphics.RectF;
 import android.graphics.drawable.Drawable;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
+import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.ScaleGestureDetector;
 import android.view.View;
@@ -33,6 +35,9 @@ public class GestureImageView extends android.support.v7.widget.AppCompatImageVi
     private Matrix mImgMatrix;
     private ScaleGestureDetector scaleGestureDetector;
     private Context mContext;
+    private GestureDetector mGestureDetector;
+    private float originIntrinsicWidth = 0F;
+    private float originIntrinsicHeight = 0F;
 
     public GestureImageView(Context context) {
         this(context, null);
@@ -48,7 +53,6 @@ public class GestureImageView extends android.support.v7.widget.AppCompatImageVi
         initData();
     }
 
-    private boolean done = false;
 
     private void initData() {
         setScaleType(ScaleType.MATRIX);
@@ -62,6 +66,9 @@ public class GestureImageView extends android.support.v7.widget.AppCompatImageVi
                 Drawable drawable = getDrawable();
                 int intrinsicWidth = drawable.getIntrinsicWidth();
                 int intrinsicHeight = drawable.getIntrinsicHeight();
+
+                originIntrinsicWidth = intrinsicWidth;
+                originIntrinsicHeight = intrinsicHeight;
                 int width = getWidth();
                 int height = getHeight();
                 if (intrinsicWidth <= width && intrinsicHeight <= height) {
@@ -79,13 +86,47 @@ public class GestureImageView extends android.support.v7.widget.AppCompatImageVi
                 getViewTreeObserver().removeOnGlobalLayoutListener(this);
             }
         });
+        mGestureDetector = new GestureDetector(mContext, new GestureDetector.SimpleOnGestureListener() {
+            @Override
+            public boolean onDoubleTap(MotionEvent e) {
+                Drawable drawable = getDrawable();
+                if (drawable != null) {
+                    RectF rectF = getRectF(drawable);
+                    if (rectF.width() > getWidth() || rectF.height() > getHeight()) {
+                        if (originIntrinsicHeight < getHeight() || originIntrinsicWidth < getWidth()) {
+                            float childScale = Math.min(originIntrinsicHeight / rectF.width(), originIntrinsicWidth / rectF.height());
+                            mImgMatrix.postScale(childScale, childScale, e.getX(), e.getY());
+                        } else {
+                            float childScale = Math.min(getWidth() / rectF.width(), getHeight() / rectF.height());
+                            mImgMatrix.postScale(childScale, childScale, e.getX(), e.getY());
+                        }
+
+                    } else if (rectF.height() <= getHeight() && rectF.width() <= getWidth()) {
+                        if (originIntrinsicHeight < getHeight() || originIntrinsicWidth < getWidth()) {
+                            if (rectF.width() > originIntrinsicWidth || rectF.height() > originIntrinsicHeight) {
+                                mImgMatrix.postScale(originIntrinsicWidth / rectF.width(), originIntrinsicHeight / rectF.height(), e.getX(), e.getY());
+                            } else {
+                                mImgMatrix.postScale(2, 2, e.getX(), e.getY());
+                            }
+
+                        } else {
+                            mImgMatrix.postScale(2, 2, e.getX(), e.getY());
+                        }
+                    }
+                }
+                scopeControl();//todo double control
+                setImageMatrix(mImgMatrix);
+                return super.onDoubleTap(e);
+            }
+        });
     }
+
+    private boolean flag = true;
 
 
     @Override
     public boolean onScale(ScaleGestureDetector detector) {
         float iScale = detector.getScaleFactor();
-//        System.out.println("iScale" + iScale);
         if (getDrawable() == null) {
             return true;
         }
@@ -98,7 +139,6 @@ public class GestureImageView extends android.support.v7.widget.AppCompatImageVi
             if (iiScale * iScale < scale) {
                 iScale = scale / iiScale;
             }
-//            mImgMatrix.postScale(iScale, iScale, getWidth() / 2, getHeight() / 2);
             //前乘后乘
             mImgMatrix.postScale(iScale, iScale, detector.getFocusX(), detector.getFocusY());
             scopeControl();
@@ -123,8 +163,24 @@ public class GestureImageView extends android.support.v7.widget.AppCompatImageVi
     public boolean onTouch(View v, MotionEvent event) {
         scaleGestureDetector.onTouchEvent(event);
         translateControl(event);
-        scopeControl();
+        mGestureDetector.onTouchEvent(event);
+        touchControl(event);
         return true;
+    }
+
+    /*处理华东冲突*/
+    private void touchControl(MotionEvent event) {
+        RectF rectF = getRectF(getDrawable());
+        switch (event.getAction()) {
+            case MotionEvent.ACTION_DOWN:
+            case MotionEvent.ACTION_MOVE:
+                if (rectF.width() > getWidth() || rectF.height() > getHeight()) {
+                    getParent().requestDisallowInterceptTouchEvent(true);
+                }
+                break;
+            default:
+                break;
+        }
     }
 
     float lastX = 0f;
@@ -136,7 +192,7 @@ public class GestureImageView extends android.support.v7.widget.AppCompatImageVi
         float y;
         x = event.getX();
         y = event.getY();
-        //只能单移动
+        //只能单指移动
         if (event.getPointerCount() > 1) {
             return;
         }
@@ -148,16 +204,8 @@ public class GestureImageView extends android.support.v7.widget.AppCompatImageVi
             case MotionEvent.ACTION_MOVE:
                 Drawable drawable = getDrawable();
                 if (drawable != null) {
-                    float dx = x - lastX;
-                    float dy = y - lastY;
-                    mImgMatrix.postTranslate(dx, dy);
-                    RectF rectF = getRectF(drawable);
-
-                    topBottomT = rectF.width() < getWidth();
-                    leftRightT = rectF.height() < getHeight();
-
-                    if (topBottomT || leftRightT)
-                        setImageMatrix(mImgMatrix);
+                    translateScopeControl(drawable, x, y);
+                    setImageMatrix(mImgMatrix);
                 }
                 lastX = x;
                 lastY = y;
@@ -174,45 +222,48 @@ public class GestureImageView extends android.support.v7.widget.AppCompatImageVi
         }
     }
 
-    private void translateScopeControl() {
+    /*单指移动范围控制*/
+    private void translateScopeControl(Drawable drawable, float x, float y) {
+        float width = getWidth();
+        float height = getHeight();
+        float dx = x - lastX;
+        float dy = y - lastY;
+        RectF rectF = getRectF(drawable);
+        if (rectF.width() <= width) {
+            //禁止移动
+            dx = 0;
+        } else if (rectF.left + dx > 0) {
+            if (rectF.left < 0) {
+                dx = -rectF.left;
+            } else {
+                dx = 0;
+            }
+        } else if (rectF.right + dx < width) {
+            if (rectF.right > width) {
+                dx = width - rectF.right;
+            } else {
+                dx = 0;
+            }
+        }
+
+        if (rectF.height() <= height) {
+            dy = 0;
+        } else if (rectF.top + dy > 0) {
+            if (rectF.top < 0) {
+                dy = -rectF.top;
+            } else {
+                dy = 0;
+            }
+        } else if (rectF.bottom + dy < height) {
+            if (rectF.bottom > height) {
+                dy = height - rectF.bottom;
+            } else {
+                dy = 0;
+            }
+        }
+        mImgMatrix.postTranslate(dx, dy);
 
     }
-
-//    private int lastPointCount = 0;
-//
-//    private void translateControl(MotionEvent event) {
-//        int pointerCount = event.getPointerCount();
-//        float x = 0f;
-//        float y = 0f;
-//        for (int i = 0; i < pointerCount; i++) {
-//            x += event.getX(i);
-//            y += event.getY(i);
-//        }
-//        if (pointerCount != lastPointCount) {
-//            lastX = x;
-//            lastY = y;
-//        }
-//        lastPointCount = pointerCount;
-//        switch (event.getActionMasked()) {
-//            case MotionEvent.ACTION_MOVE:
-//                float dx = x - lastX;
-//                float dy = y - lastY;
-//                mImgMatrix.postTranslate(dx, dy);
-//                setImageMatrix(mImgMatrix);
-//                lastX = x;
-//                lastY = y;
-//                break;
-//            case MotionEvent.ACTION_UP:
-//                lastPointCount = 0;
-//                break;
-//            case MotionEvent.ACTION_CANCEL:
-//                lastPointCount = 0;
-//                break;
-//            default:
-//                break;
-//        }
-//
-//    }
 
     /*获取Scale比值*/
     float[] values = new float[9];
@@ -222,12 +273,7 @@ public class GestureImageView extends android.support.v7.widget.AppCompatImageVi
         return values[Matrix.MSCALE_Y];
     }
 
-    private boolean topBottomT = true;
-    private boolean leftRightT = true;
-
-    /**
-     * 范围控制
-     */
+    /*范围控制*/
     private void scopeControl() {
         float x = 0;
         float y = 0;
@@ -258,8 +304,7 @@ public class GestureImageView extends android.support.v7.widget.AppCompatImageVi
         if (rectF.height() < getHeight()) {
             y = getHeight() / 2 - rectF.bottom + rectF.height() / 2;
         }
-        if (topBottomT || leftRightT)
-            mImgMatrix.postTranslate(x, y);
+        mImgMatrix.postTranslate(x, y);
     }
 
     private RectF getRectF(Drawable drawable) {
@@ -269,15 +314,5 @@ public class GestureImageView extends android.support.v7.widget.AppCompatImageVi
         mImgMatrix.mapRect(rectF);
         return rectF;
     }
-//    /**
-//     * 是否是推动行为
-//     *
-//     * @param dx
-//     * @param dy
-//     * @return
-//     */
-//    private boolean isCanDrag(float dx, float dy)
-//    {
-//        return Math.sqrt((dx * dx) + (dy * dy)) >= mTouchSlop;
-//    }
+
 }
