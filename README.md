@@ -112,3 +112,12 @@ lcv_chart.setOnPointClickListener(new LineChartView.OnPointClickListener() {
                  }
              });
 ```
+### 具有手势识别的ImageView 支持，放大、缩小、移动、双击，滑动冲突
+```
+    <com.bj.zhaoyun.view.picture.GestureImageView
+        android:id="@+id/imageview"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:src="@mipmap/img_report" />
+```
+
