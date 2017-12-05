@@ -9,8 +9,13 @@ import android.widget.Toast;
 import com.bj.zhaoyun.BaseActivity;
 import com.bj.zhaoyun.R;
 import com.bj.zhaoyun.util.ToastUtil;
+import com.bj.zhaoyun.view.chart.CirclePieChart;
 import com.bj.zhaoyun.view.chart.PieChart;
+import com.bj.zhaoyun.view.chart.PieChartPart;
 import com.bj.zhaoyun.view.chart.PieChartTouchView;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import butterknife.BindView;
 
@@ -24,6 +29,9 @@ public class PieChartActivity extends BaseActivity {
     LinearLayout ll_container;
     @BindView(R.id.pct_chart)
     PieChartTouchView pct_chart;
+    @BindView(R.id.cpc_pie)
+    CirclePieChart cpc_pie;
+
     int maxLength = 5;
     double num[] = new double[maxLength];
     int color[] = new int[maxLength];
@@ -66,6 +74,19 @@ public class PieChartActivity extends BaseActivity {
                 ToastUtil.showToast(mContext, "选中了-->" + position, Toast.LENGTH_SHORT);
             }
         });
+
+        PieChartPart pieChartPart1 = new PieChartPart(Color.parseColor("#333333"), 0.3f);
+        PieChartPart pieChartPart2 = new PieChartPart(Color.parseColor("#ffff00"), 0.1f);
+        PieChartPart pieChartPart3 = new PieChartPart(Color.parseColor("#330000ff"), 0.2f);
+        PieChartPart pieChartPart4 = new PieChartPart(Color.parseColor("#33ff0000"), 0.2f);
+        PieChartPart pieChartPart5 = new PieChartPart(Color.parseColor("#33ff00"), 0.2f);
+        List<PieChartPart> mListsss = new ArrayList<>();
+        mListsss.add(pieChartPart1);
+        mListsss.add(pieChartPart2);
+        mListsss.add(pieChartPart3);
+        mListsss.add(pieChartPart4);
+        mListsss.add(pieChartPart5);
+        cpc_pie.setData(mListsss);
     }
 
     private TextView setTextView(int x, String text) {

@@ -31,10 +31,13 @@
             android:textSize="20sp" />
 
         <LinearLayout
+            android:background="#33303F9F"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
             <GridView
+                android:horizontalSpacing="2dp"
+                android:verticalSpacing="2dp"
                 android:id="@+id/gv_control"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"

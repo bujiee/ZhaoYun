@@ -26,84 +26,124 @@ public class RPNTest {
 
     @Test
     public void testRPN() {
-        String src = "10+(11+(2-10)*30)+4"; //10 11 2 10 - 30 * + 4 + +
+        String src = "10+(11+(10-2)*30)+4"; //10 11 2 10 - 30 * + 4 + +
         List<String> list = new ArrayList<>();
-        list.add("10");
-        list.add("+");
-        list.add("(");
-        list.add("11");
-        list.add("+");
-        list.add("(");
-        list.add("2");
-        list.add("-");
-        list.add("10");
-        list.add(")");
-        list.add("*");
-        list.add("30");
-        list.add(")");
-        list.add("+");
-        list.add("4");
-//        String src = "10*(1+11)-20/2";  // 10 1 11 + * 20 2 / -
-//        list.add("10");
-//        list.add("*");
-//        list.add("(");
-//        list.add("1");
-//        list.add("+");
-//        list.add("11");
-//        list.add(")");
+        // 3-1-9-9
+//        list.add("3");
 //        list.add("-");
-//        list.add("20");
-//        list.add("/");
+//        list.add("1");
+//        list.add("-");
+//        list.add("9");
+//        list.add("-");
+//        list.add("9");
+        //3*9*2/3
+        list.add("3");
+        list.add("*");
+        list.add("9");
+        list.add("*");
+        list.add("2");
+        list.add("/");
+        list.add("3");
+        System.out.println(MathUtil.middleToEnd(list));
+
+//        list.add("10");
+//        list.add("+");
+//        list.add("(");
+//        list.add("11");
+//        list.add("+");
+//        list.add("(");
+//        list.add("10");
+//        list.add("-");
 //        list.add("2");
-//        System.out.println(middleToEnd(list));
-//        System.out.println(MathUtil.middleToEnd(list));
-        //测试四则运算 10 11 2 10 - 30 * + 4 + +
-        List<String> listS = new ArrayList<>();
-        listS.add("10");
-        listS.add("11");
-        listS.add("2");
-        listS.add("10");
-        listS.add("-");
-        listS.add("30");
-        listS.add("*");
-        listS.add("+");
-        listS.add("4");
-        listS.add("+");
-        listS.add("+");
-
-
-        System.out.println(getResult(listS));
+//        list.add(")");
+//        list.add("*");
+//        list.add("30");
+//        list.add(")");
+//        list.add("+");
+//        list.add("4");
+////        String src = "10*(1+11)-20/2";  // 10 1 11 + * 20 2 / -
+////        list.add("10");
+////        list.add("*");
+////        list.add("(");
+////        list.add("1");
+////        list.add("+");
+////        list.add("11");
+////        list.add(")");
+////        list.add("-");
+////        list.add("20");
+////        list.add("/");
+////        list.add("2");
+////        System.out.println(middleToEnd(list));
+////        System.out.println(MathUtil.middleToEnd(list));
+//        //测试四则运算 10 11 2 10 - 30 * + 4 + +
+//        List<String> listS = new ArrayList<>();
+////        listS.add("10");
+////        listS.add("11");
+////        listS.add("10");
+////        listS.add("2");
+////        listS.add("-");
+////        listS.add("30");
+////        listS.add("*");
+////        listS.add("+");
+////        listS.add("4");
+////        listS.add("+");
+////        listS.add("+");
+//        //10 1 11 + * 20 2 / -
+//        listS.add("10");
+//        listS.add("1");
+//        listS.add("11");
+//        listS.add("+");
+//        listS.add("*");
+//        listS.add("20");
+//        listS.add("2");
+//        listS.add("/");
+//        listS.add("-");
+//        System.out.println(getResult(listS));
     }
 
     private String getResult(List<String> src) {
         String result = "ERROR";
-        for (int i = 0; i < src.size(); i++) {
-            if (src.get(i) == null || src.get(i).length() < 0) {
-                return result;
-            }
-            switch (src.get(i)) {
-                case add:
-                    src.set(i - 2, String.valueOf(Double.valueOf(src.get(i - 1)) + Double.valueOf(src.get(i - 2))));
-                    i -= 2;
-                    break;
-                case subtraction:
-                    src.set(i - 2, String.valueOf(Double.valueOf(src.get(i - 1)) - Double.valueOf(src.get(i - 2))));
-                    i -= 2;
-                    break;
-                case multiplication:
-                    src.set(i - 2, String.valueOf(Double.valueOf(src.get(i - 1)) * Double.valueOf(src.get(i - 2))));
-                    i -= 2;
-                    break;
-                case division:
-                    src.set(i - 2, String.valueOf(Double.valueOf(src.get(i - 1)) / Double.valueOf(src.get(i - 2))));
-                    i -= 2;
-                    break;
-                default:
-                    break;
-            }
-
+        if (src == null || src.size() < 3) {
+            return result;
         }
-        return result;
+        try {
+            for (int i = 0; i < src.size(); i++) {
+                switch (src.get(i)) {
+                    case add:
+                        src.set(i - 2, String.valueOf(Double.valueOf(src.get(i - 2)) + Double.valueOf(src.get(i - 1))));
+                        src.remove(i - 1);
+                        src.remove(i - 1);
+                        i -= 2;
+                        break;
+                    case subtraction:
+                        src.set(i - 2, String.valueOf(Double.valueOf(src.get(i - 2)) - Double.valueOf(src.get(i - 1))));
+                        src.remove(i - 1);
+                        src.remove(i - 1);
+                        i -= 2;
+                        break;
+                    case multiplication:
+                        src.set(i - 2, String.valueOf(Double.valueOf(src.get(i - 2)) * Double.valueOf(src.get(i - 1))));
+                        src.remove(i - 1);
+                        src.remove(i - 1);
+                        i -= 2;
+                        break;
+                    case division:
+                        src.set(i - 2, String.valueOf(Double.valueOf(src.get(i - 2)) / Double.valueOf(src.get(i - 1))));
+                        src.remove(i - 1);
+                        src.remove(i - 1);
+                        i -= 2;
+                        break;
+                    default:
+                        break;
+                }
+
+            }
+            result = src.get(0);
+            return result;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return "ERROR";
+        }
     }
 
 
@@ -160,5 +200,6 @@ public class RPNTest {
         }
         return sb.toString();
     }
+
 
 }

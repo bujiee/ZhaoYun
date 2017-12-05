@@ -11,6 +11,13 @@ import java.util.Stack;
  */
 
 public class MathUtil {
+    private static final String add = "+";//1
+    private static final String subtraction = "-";//1
+    private static final String multiplication = "*";//2
+    private static final String division = "/";//2
+    private static final String left_parenthesis = "(";//3
+    private static final String right_parenthesis = ")";//0
+
     public static double doubleDiv(double val1, double val2) {
         BigDecimal bd1 = new BigDecimal(val1);
         BigDecimal bd2 = new BigDecimal(val2);
@@ -35,14 +42,17 @@ public class MathUtil {
 
     /**
      * 中缀表达式变为后缀表达式
+     * 1.遇到操作数：直接输出（添加到后缀表达式中）
+     * 2.栈为空时，遇到运算符，直接入栈
+     * 3.遇到左括号：将其入栈
+     * 4.遇到右括号：执行出栈操作，并将出栈的元素输出，直到弹出栈的是左括号，左括号不输出。
+     * 5.遇到其他运算符：加减乘除：弹出所有优先级大于或者等于该运算符的栈顶元素，然后将该运算符入栈
+     * 6.最终将栈中的元素依次出栈，输出。
      */
-    public static List<String> middleToEnd(List<String> src) {
-        final String add = "+";
-        final String subtraction = "-";
-        final String multiplication = "*";
-        final String division = "/";
-        final String left_parenthesis = "(";
-        final String right_parenthesis = ")";
+    public static List<String> middleToEnd(List<String> srcList) {
+        //数据处理
+        List<String> src = new ArrayList<>();
+        //todo 数据结构处理
         //*************************** 华丽分割符号*********************************//
         List<String> list = new ArrayList<>();
         Stack<String> stack = new Stack<>();
@@ -52,7 +62,7 @@ public class MathUtil {
                 case add:
                 case subtraction:
                     while (true) {
-                        if (!stack.isEmpty() && (division.equals(stack.peek()) || multiplication.equals(stack.peek()))) {
+                        if (!stack.isEmpty() && (add.equals(stack.peek()) || subtraction.equals(stack.peek()) || division.equals(stack.peek()) || multiplication.equals(stack.peek()))) {
                             String tmp = stack.pop();
                             list.add(tmp);
                         } else {
@@ -63,6 +73,16 @@ public class MathUtil {
                     break;
                 case multiplication:
                 case division:
+                    while (true) {
+                        if (!stack.isEmpty() && (division.equals(stack.peek()) || multiplication.equals(stack.peek()))) {
+                            String tmp = stack.pop();
+                            list.add(tmp);
+                        } else {
+                            stack.push(tmpResult);
+                            break;
+                        }
+                    }
+                    break;
                 case left_parenthesis:
                     stack.push(tmpResult);
                     break;
@@ -94,5 +114,56 @@ public class MathUtil {
             }
         }
         return list;
+    }
+
+    /**
+     * 根据后缀表达式返回,结果
+     *
+     * @param src 后缀表达式集合,如 3 1 + => [3,1,+]
+     * @return
+     */
+    public static String getResult(List<String> src) {
+        String result = "ERROR";
+        if (src == null || src.size() < 3) {
+            return result;
+        }
+        try {
+            for (int i = 0; i < src.size(); i++) {
+                switch (src.get(i)) {
+                    case add:
+                        src.set(i - 2, String.valueOf(Double.valueOf(src.get(i - 2)) + Double.valueOf(src.get(i - 1))));
+                        src.remove(i - 1);
+                        src.remove(i - 1);
+                        i -= 2;
+                        break;
+                    case subtraction:
+                        src.set(i - 2, String.valueOf(Double.valueOf(src.get(i - 2)) - Double.valueOf(src.get(i - 1))));
+                        src.remove(i - 1);
+                        src.remove(i - 1);
+                        i -= 2;
+                        break;
+                    case multiplication:
+                        src.set(i - 2, String.valueOf(Double.valueOf(src.get(i - 2)) * Double.valueOf(src.get(i - 1))));
+                        src.remove(i - 1);
+                        src.remove(i - 1);
+                        i -= 2;
+                        break;
+                    case division:
+                        src.set(i - 2, String.valueOf(Double.valueOf(src.get(i - 2)) / Double.valueOf(src.get(i - 1))));
+                        src.remove(i - 1);
+                        src.remove(i - 1);
+                        i -= 2;
+                        break;
+                    default:
+                        break;
+                }
+
+            }
+            result = src.get(0);
+            return result;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return "ERROR";
+        }
     }
 }
