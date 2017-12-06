@@ -25,7 +25,7 @@ import java.util.List;
 
 /**
  * Description：計算器，首先将所有的四则运算的中缀表达式变为后缀表达式
- * 然后通过后缀表达式求值
+ * 然后通过后缀表达式求值,仅为测试后缀表达式
  * Created by Buuu on 2017/11/29.
  */
 

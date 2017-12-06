@@ -37,7 +37,7 @@ public class RPNTest {
 //        list.add("-");
 //        list.add("9");
         //3*9*2/3
-        list.add("3");
+        list.add("3.5");
         list.add("*");
         list.add("9");
         list.add("*");

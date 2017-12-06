@@ -125,4 +125,10 @@ lcv_chart.setOnPointClickListener(new LineChartView.OnPointClickListener() {
         android:layout_height="match_parent"
         android:src="@mipmap/img_report" />
 ```
+### 一个小计算器(仅为测试中缀表达式)
+```
+    <com.bj.zhaoyun.view.calc.CalculatorView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+```
 

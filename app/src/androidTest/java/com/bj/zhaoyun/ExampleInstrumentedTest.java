@@ -3,9 +3,15 @@ package com.bj.zhaoyun;
 import android.content.Context;
 import android.support.test.InstrumentationRegistry;
 import android.support.test.runner.AndroidJUnit4;
+import android.util.Log;
+
+import com.bj.zhaoyun.util.MathUtil;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import static org.junit.Assert.*;
 
@@ -22,5 +28,19 @@ public class ExampleInstrumentedTest {
         Context appContext = InstrumentationRegistry.getTargetContext();
 
         assertEquals("com.bj.zhaoyun", appContext.getPackageName());
+    }
+
+    @Test
+    public void testMiddle2End() throws Exception {
+        List<String> list = new ArrayList<>();
+        list.add("3.5");
+        list.add("*");
+        list.add("9");
+        list.add("*");
+        list.add("2");
+        list.add("/");
+        list.add("3");
+//        System.out.println(MathUtil.middleToEnd(list));
+        Log.d("testMiddle2End",MathUtil.middleToEnd(list).toString());
     }
 }
