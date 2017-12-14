@@ -6,6 +6,7 @@ import android.widget.Toast;
 import com.bj.zhaoyun.BaseActivity;
 import com.bj.zhaoyun.R;
 import com.bj.zhaoyun.util.ToastUtil;
+import com.bj.zhaoyun.view.chart.LineChartSurfaceView;
 import com.bj.zhaoyun.view.chart.LineChartView;
 
 import java.util.ArrayList;
@@ -19,6 +20,9 @@ import butterknife.BindView;
 public class LineChartActivity extends BaseActivity {
     @BindView(R.id.lcv_chart)
     LineChartView lcv_chart;
+    @BindView(R.id.lcsv_view)
+    LineChartSurfaceView lcsv_view;
+
 
     @Override
     public int getLayoutId() {
@@ -44,5 +48,12 @@ public class LineChartActivity extends BaseActivity {
                 ToastUtil.showToast(mContext, position + "", Toast.LENGTH_SHORT);
             }
         });
+
+        List<Integer> list=new ArrayList<>();
+        for (int i = 0; i < 100; i++) {
+            list.add(i);
+        }
+        lcsv_view.setBloodPressure(list);
+
     }
 }

@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 
+import com.bj.qrcodelibrary.CaptureActivity;
 import com.bj.zhaoyun.BaseActivity;
 import com.bj.zhaoyun.adapter.MyRecyclerAdapter;
 import com.bj.zhaoyun.R;
@@ -34,6 +35,7 @@ public class MainActivity extends BaseActivity {
         mDatas.add("折线图");
         mDatas.add("图片手势识别");
         mDatas.add("计算器");
+        mDatas.add("QRCode");
         MyRecyclerAdapter adapter = new MyRecyclerAdapter(mDatas, mContext);
         rv_container.setAdapter(adapter);
         adapter.setItemClickListener(new MyRecyclerAdapter.OnItemClickListener() {
@@ -57,6 +59,9 @@ public class MainActivity extends BaseActivity {
                         break;
                     case 5:
                         startActivity(new Intent(mContext, CalculatorActivity.class));
+                        break;
+                    case 6:
+                        startActivity(new Intent(mContext, CaptureActivity.class));
                         break;
                     default:
                         break;
