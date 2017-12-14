@@ -31,6 +31,10 @@ import android.graphics.Rect;
 import android.graphics.RectF;
 import android.text.TextUtils;
 import android.util.AttributeSet;
+import android.util.Log;
+import android.view.GestureDetector;
+import android.view.MotionEvent;
+import android.view.ScaleGestureDetector;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.LinearInterpolator;
@@ -56,7 +60,8 @@ import java.util.List;
  *
  * @author dswitkin@google.com (Daniel Switkin)
  */
-public final class ViewfinderView extends View {
+public final class ViewfinderView extends View implements ScaleGestureDetector.OnScaleGestureListener,
+        View.OnTouchListener {
 
     private static final int[] SCANNER_ALPHA = {0, 64, 128, 192, 255, 192, 128, 64};
     private static final long ANIMATION_DELAY = 80L;
@@ -86,7 +91,9 @@ public final class ViewfinderView extends View {
     private boolean textVisible;
     private float textMargin;//描述文本距离上面的距离
     private float text_size;//描述文本字体大小
-
+    private ScaleGestureDetector scaleGestureDetector;
+    private GestureDetector gestureDetector;
+    private boolean zoomMaxFlag = true;
 
     // This constructor is used when the class is built from an XML resource.
     public ViewfinderView(Context context, AttributeSet attrs) {
@@ -119,8 +126,34 @@ public final class ViewfinderView extends View {
         textMargin = a.getDimensionPixelSize(R.styleable.ViewfinderView_text_margin, dip2px(context, 20));
         text_size = a.getDimensionPixelSize(R.styleable.ViewfinderView_text_size, sp2px(context, 14));
         a.recycle();
+        setOnTouchListener(this);
+        scaleGestureDetector = new ScaleGestureDetector(context, this);
+        gestureDetector = new GestureDetector(context, new GestureDetector.SimpleOnGestureListener() {
+            @Override
+            public boolean onDoubleTap(MotionEvent e) {
+                if (zoomMaxFlag) {
+                    if (mCameraZoomListener != null) {
+                        mCameraZoomListener.onZooming(true, false, true, 1);
+                    }
+                    zoomMaxFlag = false;
+                } else {
+                    if (mCameraZoomListener != null) {
+                        mCameraZoomListener.onZooming(true, false, false, 1);
+                    }
+                    zoomMaxFlag = true;
+                }
+                return super.onDoubleTap(e);
+            }
 
-
+            @Override
+            public boolean onSingleTapUp(MotionEvent e) {
+                if (mCameraZoomListener != null) {
+                    //判断点击事件是否在
+                    mCameraZoomListener.onZooming(false, true, false, 1);
+                }
+                return super.onSingleTapUp(e);
+            }
+        });
     }
 
     public void setCameraManager(CameraManager cameraManager) {
@@ -157,7 +190,7 @@ public final class ViewfinderView extends View {
             paint.setColor(laserColor);
 //            paint.setAlpha(SCANNER_ALPHA[scannerAlpha]);
             scannerAlpha = (scannerAlpha + 1) % SCANNER_ALPHA.length;
-            int middle = frame.height() / 2 + frame.top;
+//            int middle = frame.height() / 2 + frame.top;
 //            canvas.drawRect(frame.left + 2, middle - 1, frame.right - 1, middle + 2, paint);//移除红线
 
             float scaleX = frame.width() / (float) previewFrame.width();
@@ -271,7 +304,7 @@ public final class ViewfinderView extends View {
     }
 
     /*画扫描线*/
-    private void drawBitmap(final Rect frame, Canvas canvas) {//todo 图片滑动抖动
+    private void drawBitmap(final Rect frame, Canvas canvas) {
         if (animator == null) {
             animator = ValueAnimator.ofFloat(frame.top, frame.bottom);
             animator.setDuration(3000);
@@ -316,7 +349,7 @@ public final class ViewfinderView extends View {
     /**
      * 将dip或dp值转换为px值，保证尺寸大小不变
      */
-    public static  int dip2px(Context context, float dipValue) {
+    public static int dip2px(Context context, float dipValue) {
         final float scale = context.getResources().getDisplayMetrics().density;
         return (int) (dipValue * scale + 0.5f);
     }
@@ -330,4 +363,44 @@ public final class ViewfinderView extends View {
     }
 
 
+    @Override
+    public boolean onScale(ScaleGestureDetector detector) {
+        if (mCameraZoomListener != null) {
+            mCameraZoomListener.onZooming(false, false, false, detector.getScaleFactor());
+        }
+        return true;
+    }
+
+    @Override
+    public boolean onScaleBegin(ScaleGestureDetector detector) {
+        return true;
+    }
+
+    @Override
+    public void onScaleEnd(ScaleGestureDetector detector) {
+
+    }
+
+    @Override
+    public boolean onTouch(View v, MotionEvent event) {
+        scaleGestureDetector.onTouchEvent(event);
+        gestureDetector.onTouchEvent(event);
+        return true;
+    }
+
+    public interface CameraZoomListener {
+        /**
+         * @param isDouble   是否双击
+         * @param isMax      //是否移动到最大
+         * @param scaleValue //缩小放大的值
+         * @param isSingle   //是否单击
+         */
+        void onZooming(boolean isDouble, boolean isSingle, boolean isMax, float scaleValue);
+    }
+
+    private CameraZoomListener mCameraZoomListener;
+
+    public void setCameraZoomListener(CameraZoomListener mCameraZoomListener) {
+        this.mCameraZoomListener = mCameraZoomListener;
+    }
 }

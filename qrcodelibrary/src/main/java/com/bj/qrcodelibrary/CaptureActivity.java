@@ -159,9 +159,9 @@ public final class CaptureActivity extends Activity implements SurfaceHolder.Cal
         // want to open the camera driver and measure the screen size if we're going to show the help on
         // first launch. That led to bugs where the scanning rectangle was the wrong size and partially
         // off screen.
-        cameraManager = new CameraManager(getApplication());
-        cameraManager.setManualFramingRect(ViewfinderView.dip2px(this.getBaseContext(),200), ViewfinderView.dip2px(this.getBaseContext(),180));//todo 设置预览的宽高
         viewfinderView = (ViewfinderView) findViewById(R.id.viewfinder_view);
+        cameraManager = new CameraManager(getApplication(),viewfinderView);
+        cameraManager.setManualFramingRect(ViewfinderView.dip2px(this.getBaseContext(),200), ViewfinderView.dip2px(this.getBaseContext(),180));//todo 设置预览的宽高
         viewfinderView.setCameraManager(cameraManager);
 
         resultView = findViewById(R.id.result_view);
