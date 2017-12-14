@@ -142,16 +142,25 @@ public final class ViewfinderView extends View implements ScaleGestureDetector.O
                     }
                     zoomMaxFlag = true;
                 }
-                return super.onDoubleTap(e);
+                return true;
             }
 
             @Override
             public boolean onSingleTapUp(MotionEvent e) {
+//                if (mCameraZoomListener != null) {
+//                    //判断点击事件是否在
+//                    mCameraZoomListener.onZooming(false, true, false, 1);
+//                }
+                return false;
+            }
+
+            @Override
+            public void onLongPress(MotionEvent e) {
+                super.onLongPress(e);
                 if (mCameraZoomListener != null) {
                     //判断点击事件是否在
                     mCameraZoomListener.onZooming(false, true, false, 1);
                 }
-                return super.onSingleTapUp(e);
             }
         });
     }
