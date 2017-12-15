@@ -131,4 +131,6 @@ lcv_chart.setOnPointClickListener(new LineChartView.OnPointClickListener() {
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 ```
-
+### 二维码(QRCode)
+开启方式:打开CaptureActivity
+功能:类似微信,具有手势识别和手电筒
