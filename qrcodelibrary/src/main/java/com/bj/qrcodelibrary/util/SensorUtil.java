@@ -13,4 +13,5 @@ public class SensorUtil {
     public static boolean hasFlashlight(Context context) {
         return context.getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA_FLASH);
     }
+
 }

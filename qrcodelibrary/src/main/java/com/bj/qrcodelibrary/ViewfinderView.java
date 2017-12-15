@@ -29,6 +29,10 @@ import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.Rect;
 import android.graphics.RectF;
+import android.hardware.Sensor;
+import android.hardware.SensorEvent;
+import android.hardware.SensorEventListener;
+import android.hardware.SensorManager;
 import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.util.Log;
@@ -42,6 +46,7 @@ import android.view.animation.TranslateAnimation;
 import android.widget.LinearLayout;
 
 import com.bj.qrcodelibrary.camera.CameraManager;
+import com.bj.qrcodelibrary.util.LightSensor;
 import com.google.zxing.ResultPoint;
 
 import java.util.ArrayList;
@@ -61,7 +66,7 @@ import java.util.List;
  * @author dswitkin@google.com (Daniel Switkin)
  */
 public final class ViewfinderView extends View implements ScaleGestureDetector.OnScaleGestureListener,
-        View.OnTouchListener {
+        View.OnTouchListener{
 
     private static final int[] SCANNER_ALPHA = {0, 64, 128, 192, 255, 192, 128, 64};
     private static final long ANIMATION_DELAY = 80L;
@@ -98,7 +103,6 @@ public final class ViewfinderView extends View implements ScaleGestureDetector.O
     // This constructor is used when the class is built from an XML resource.
     public ViewfinderView(Context context, AttributeSet attrs) {
         super(context, attrs);
-
         // Initialize these once for performance rather than calling them every time in onDraw().
         paint = new Paint(Paint.ANTI_ALIAS_FLAG);
         Resources resources = getResources();
@@ -157,10 +161,10 @@ public final class ViewfinderView extends View implements ScaleGestureDetector.O
             @Override
             public void onLongPress(MotionEvent e) {
                 super.onLongPress(e);
-                if (mCameraZoomListener != null) {
-                    //判断点击事件是否在
-                    mCameraZoomListener.onZooming(false, true, false, 1);
-                }
+//                if (mCameraZoomListener != null) {
+//                    //判断点击事件是否在
+//                    mCameraZoomListener.onZooming(false, true, false, 1);
+//                }
             }
         });
     }

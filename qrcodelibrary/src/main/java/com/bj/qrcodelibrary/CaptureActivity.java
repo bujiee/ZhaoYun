@@ -27,6 +27,9 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Paint;
+import android.hardware.Camera;
+import android.hardware.Sensor;
+import android.hardware.SensorEvent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -46,11 +49,14 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bj.qrcodelibrary.camera.CameraManager;
+import com.bj.qrcodelibrary.camera.open.OpenCamera;
 import com.bj.qrcodelibrary.clipboard.ClipboardInterface;
 import com.bj.qrcodelibrary.history.HistoryActivity;
 import com.bj.qrcodelibrary.history.HistoryItem;
@@ -60,6 +66,8 @@ import com.bj.qrcodelibrary.result.ResultHandler;
 import com.bj.qrcodelibrary.result.ResultHandlerFactory;
 import com.bj.qrcodelibrary.result.supplement.SupplementalInfoRetriever;
 import com.bj.qrcodelibrary.share.ShareActivity;
+import com.bj.qrcodelibrary.util.LightSensor;
+import com.bj.qrcodelibrary.util.SensorUtil;
 import com.google.zxing.BarcodeFormat;
 
 import com.google.zxing.DecodeHintType;
@@ -81,7 +89,7 @@ import java.util.Map;
  * @author dswitkin@google.com (Daniel Switkin)
  * @author Sean Owen
  */
-public final class CaptureActivity extends Activity implements SurfaceHolder.Callback {
+public final class CaptureActivity extends Activity implements SurfaceHolder.Callback, LightSensor.ChangeListener, CompoundButton.OnCheckedChangeListener {
 
     private static final String TAG = CaptureActivity.class.getSimpleName();
 
@@ -117,6 +125,8 @@ public final class CaptureActivity extends Activity implements SurfaceHolder.Cal
     private InactivityTimer inactivityTimer;
     private BeepManager beepManager;
     private AmbientLightManager ambientLightManager;
+    private LightSensor lightSensor;
+    private CheckBox cb_flashlight;
 
     ViewfinderView getViewfinderView() {
         return viewfinderView;
@@ -129,6 +139,7 @@ public final class CaptureActivity extends Activity implements SurfaceHolder.Cal
     CameraManager getCameraManager() {
         return cameraManager;
     }
+
     @Override
     public void onCreate(Bundle icicle) {
         super.onCreate(icicle);
@@ -145,12 +156,15 @@ public final class CaptureActivity extends Activity implements SurfaceHolder.Cal
         ambientLightManager = new AmbientLightManager(this);
 
         PreferenceManager.setDefaultValues(this, R.xml.preferences, false);
+        lightSensor = new LightSensor(this.getBaseContext());
+        cb_flashlight = findViewById(R.id.cb_flashlight);
+        cb_flashlight.setOnCheckedChangeListener(this);
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-
+        lightSensor.register();
         // historyManager must be initialized here to update the history preference
         historyManager = new HistoryManager(this);
         historyManager.trimHistory();
@@ -160,10 +174,12 @@ public final class CaptureActivity extends Activity implements SurfaceHolder.Cal
         // first launch. That led to bugs where the scanning rectangle was the wrong size and partially
         // off screen.
         viewfinderView = (ViewfinderView) findViewById(R.id.viewfinder_view);
-        cameraManager = new CameraManager(getApplication(),viewfinderView);
-        cameraManager.setManualFramingRect(ViewfinderView.dip2px(this.getBaseContext(),200), ViewfinderView.dip2px(this.getBaseContext(),180));//todo 设置预览的宽高
-        viewfinderView.setCameraManager(cameraManager);
-
+        cameraManager = new CameraManager(getApplication(), viewfinderView);
+        lightSensor.setChangeListener(this);
+        cameraManager.setManualFramingRect(ViewfinderView.dip2px(this.getBaseContext(), 200), ViewfinderView.dip2px(this.getBaseContext(), 180));//todo 设置预览的宽高
+        if (cameraManager != null) {
+            viewfinderView.setCameraManager(cameraManager);
+        }
         resultView = findViewById(R.id.result_view);
         statusView = (TextView) findViewById(R.id.status_view);
 
@@ -304,6 +320,8 @@ public final class CaptureActivity extends Activity implements SurfaceHolder.Cal
 
     @Override
     protected void onPause() {
+        if (View.VISIBLE == cb_flashlight.getVisibility())
+            cb_flashlight.setChecked(false);
         if (handler != null) {
             handler.quitSynchronously();
             handler = null;
@@ -325,6 +343,7 @@ public final class CaptureActivity extends Activity implements SurfaceHolder.Cal
     @Override
     protected void onDestroy() {
         inactivityTimer.shutdown();
+        lightSensor.unReigister();
         super.onDestroy();
     }
 
@@ -773,6 +792,53 @@ public final class CaptureActivity extends Activity implements SurfaceHolder.Cal
     }
 
     MyOrientationDetector myOrientationDetector;
+
+    @Override
+    public void onSensorChanged(SensorEvent event) {
+        if (event == null)
+            return;
+        if (cameraManager == null)
+            return;
+        if (event.values[0] <= 50) {
+            cb_flashlight.setVisibility(View.VISIBLE);
+        } else {
+            cb_flashlight.setVisibility(View.GONE);
+        }
+        OpenCamera openCamera = cameraManager.getCamera();
+        if (openCamera == null)
+            return;
+        Camera cameraObject = openCamera.getCamera();
+        if (cameraObject == null)
+            return;
+        Camera.Parameters parameters = cameraObject.getParameters();
+        if (event.values[0] <= 50 && View.VISIBLE == cb_flashlight.getVisibility() && cb_flashlight.isChecked()) {
+            if (SensorUtil.hasFlashlight(this.getBaseContext())) {
+                if (Camera.Parameters.FLASH_MODE_OFF.equals(parameters.getFlashMode())) {
+                    parameters.setFlashMode(Camera.Parameters.FLASH_MODE_TORCH);
+                }
+            }
+        } else {
+            if (SensorUtil.hasFlashlight(this.getBaseContext())) {
+                if (!Camera.Parameters.FLASH_MODE_OFF.equals(parameters.getFlashMode())) {
+                    parameters.setFlashMode(Camera.Parameters.FLASH_MODE_OFF);
+                }
+            }
+        }
+        cameraObject.setParameters(parameters);
+    }
+
+    @Override
+    public void onAccuracyChanged(Sensor sensor, int accuracy) {
+
+    }
+
+    @Override
+    public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+        if (isChecked) {
+
+        }
+
+    }
 
     private class MyOrientationDetector extends OrientationEventListener {
 

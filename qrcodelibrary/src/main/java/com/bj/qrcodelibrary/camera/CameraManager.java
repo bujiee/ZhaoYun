@@ -20,6 +20,8 @@ import android.content.Context;
 import android.graphics.Point;
 import android.graphics.Rect;
 import android.hardware.Camera;
+import android.hardware.Sensor;
+import android.hardware.SensorEvent;
 import android.os.Handler;
 import android.util.Log;
 import android.view.SurfaceHolder;
@@ -27,6 +29,7 @@ import android.view.SurfaceHolder;
 import com.bj.qrcodelibrary.ViewfinderView;
 import com.bj.qrcodelibrary.camera.open.OpenCamera;
 import com.bj.qrcodelibrary.camera.open.OpenCameraInterface;
+import com.bj.qrcodelibrary.util.LightSensor;
 import com.bj.qrcodelibrary.util.SensorUtil;
 import com.google.zxing.PlanarYUVLuminanceSource;
 
@@ -40,7 +43,7 @@ import java.io.IOException;
  * @author dswitkin@google.com (Daniel Switkin)
  */
 @SuppressWarnings("deprecation") // camera APIs
-public final class CameraManager {
+public final class CameraManager  {
 
     private static final String TAG = CameraManager.class.getSimpleName();
 
@@ -62,6 +65,7 @@ public final class CameraManager {
     private int requestedFramingRectHeight;
     private ViewfinderView viewfinderView;
     private int defaultZoom = 1;
+    private Camera cameraObject;
     /**
      * Preview frames are delivered here, which we pass on to the registered handler. Make sure to
      * clear the handler so it will only receive one message.
@@ -101,7 +105,7 @@ public final class CameraManager {
             }
         }
 
-        final Camera cameraObject = theCamera.getCamera();
+        cameraObject = theCamera.getCamera();
         Camera.Parameters parameters = cameraObject.getParameters();
         String parametersFlattened = parameters == null ? null : parameters.flatten(); // Save these, temporarily
         try {
@@ -140,13 +144,13 @@ public final class CameraManager {
                         }
                     } else {//手势放大缩小效果
                         if (isSingle) {//是单击效果,查看是否有闪光灯,有则打开
-                            if (SensorUtil.hasFlashlight(context)) {
-                                if (Camera.Parameters.FLASH_MODE_OFF.equals(parameters.getFlashMode())) {
-                                    parameters.setFlashMode(Camera.Parameters.FLASH_MODE_TORCH);
-                                } else {
-                                    parameters.setFlashMode(Camera.Parameters.FLASH_MODE_OFF);
-                                }
-                            }
+//                            if (SensorUtil.hasFlashlight(context)) {
+//                                if (Camera.Parameters.FLASH_MODE_OFF.equals(parameters.getFlashMode())) {
+//                                    parameters.setFlashMode(Camera.Parameters.FLASH_MODE_TORCH);
+//                                } else {
+//                                    parameters.setFlashMode(Camera.Parameters.FLASH_MODE_OFF);
+//                                }
+//                            }
                         } else {
                             if (scaleValue > 1) {//放大效果
                                 defaultZoom++;
@@ -387,4 +391,13 @@ public final class CameraManager {
                 rect.width(), rect.height(), false);
     }
 
+
+    /**
+     * 获取相机
+     *
+     * @return Camera
+     */
+    public OpenCamera getCamera() {
+        return camera;
+    }
 }
